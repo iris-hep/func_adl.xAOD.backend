@@ -7,6 +7,9 @@ import ast
 import os
 import shutil
 
+async def do_exe(a):
+    return a
+
 @pytest.fixture
 def local_cache_dir():
     with tempfile.TemporaryDirectory() as local_run_dir:
@@ -17,20 +20,20 @@ def build_ast() -> ast.AST:
     return EventDataset("file://root.root") \
         .Select('lambda e: e.Jets("jets").SelectMany(lambda j: e.Tracks("InnerTracks")).First()') \
         .AsROOTTTree('dude.root', 'forkme', 'JetPt') \
-        .value(executor=lambda a: a)
+        .value(executor=do_exe)
 
 def build_ast_dr() -> ast.AST:
     return EventDataset("file://root.root") \
         .Select('lambda e: e.Jets("jets").SelectMany(lambda j: e.Tracks("InnerTracks")).First()') \
         .Select('lambda e: DeltaR(e.eta(), e.phi(), e.eta(), e.phi())') \
         .AsROOTTTree('dude.root', 'forkme', 'JetPt') \
-        .value(executor=lambda a: a)
+        .value(executor=do_exe)
 
 def build_ast_pandas() -> ast.AST:
     return EventDataset("file://root.root") \
         .Select('lambda e: e.Jets("jets").SelectMany(lambda j: e.Tracks("InnerTracks")).First()') \
         .AsPandasDF('JetPt') \
-        .value(executor=lambda a: a)
+        .value(executor=do_exe)
 
 def test_no_cache_ever(local_cache_dir):
     # Item hasn't been cached before.

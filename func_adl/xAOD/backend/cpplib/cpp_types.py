@@ -1,8 +1,9 @@
 # Simple type system to help reason about types as they go through the system.
 
+
 class terminal:
     'Represents something we cannot see inside, like float, or int, or bool'
-    def __init__ (self, t, is_pointer = False):
+    def __init__(self, t, is_pointer=False):
         '''
         Initialize a terminal type
 
@@ -27,9 +28,10 @@ class terminal:
         else:
             raise BaseException("Do not know a default value for the type '{0}'.".format(self._type))
 
+
 class collection:
     'Represents a collection/list/vector of the same type'
-    def __init__ (self, t, is_pointer = False):
+    def __init__(self, t, is_pointer=False):
         '''
         Initialize a collection type.
 
@@ -47,9 +49,10 @@ class collection:
     def is_pointer(self):
         return self._is_pointer
 
+
 class tuple:
     'Represents a value which is a collection of other types'
-    def __init__ (self, type_list):
+    def __init__(self, type_list):
         '''
         Initialize a type list. The value consists of `len(type_list)` items, each
         of the type held inside type_lits.
@@ -64,9 +67,11 @@ class tuple:
 ###########################
 # Manage types
 
+
 g_method_type_dict = {}
 
-def add_method_type_info (type_string, method_name, t):
+
+def add_method_type_info(type_string, method_name, t):
     '''
     Define a return type for a method
 
@@ -77,6 +82,7 @@ def add_method_type_info (type_string, method_name, t):
     if type_string not in g_method_type_dict:
         g_method_type_dict[type_string] = {}
     g_method_type_dict[type_string][method_name] = t
+
 
 def method_type_info(type_string, method_name):
     '''

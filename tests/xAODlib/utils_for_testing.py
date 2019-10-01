@@ -28,7 +28,7 @@ class dummy_executor:
         self.ResultRep = result_rep
         return self
 
-def exe_for_test(a: ast.AST):
+async def exe_for_test(a: ast.AST):
     'Dummy executor that will return the ast properly rendered'
     # Setup the rep for this filter
     file = find_dataset(a)

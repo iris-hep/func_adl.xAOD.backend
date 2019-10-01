@@ -3,12 +3,13 @@
 import ast
 from collections import namedtuple
 
+
 class FunctionAST(ast.AST):
     '''
     An AST node that represents a function that can be a drop-in replacement for
     a python function
     '''
-    def __init__ (self, cpp_name, include_files, cpp_return_type):
+    def __init__(self, cpp_name, include_files, cpp_return_type):
         ''' Initialize an AST node that represents a C++ drop-in function call
 
         cpp_name: The C++ name that we will use to do the call
@@ -18,6 +19,7 @@ class FunctionAST(ast.AST):
         self.include_files = include_files
         self.cpp_return_type = cpp_return_type
         self.fields = []
+
 
 class find_known_functions(ast.NodeTransformer):
     def visit_Call(self, node):
@@ -35,17 +37,18 @@ class find_known_functions(ast.NodeTransformer):
             fnc_name = '{0}.{1}'.format(fnc.__module__, node.func.id)
         except NameError:
             fnc_name = node.func.id
-    
+
         if fnc_name not in functions_to_replace:
             return node
 
-        # Build the replacement.        
+        # Build the replacement.
         info = functions_to_replace[fnc_name]
         node.func = FunctionAST(info.cpp_name, info.include_files, info.cpp_return_type)
-        
-        return node        
 
-def add_function_mapping (python_name, cpp_name, include_files, return_type):
+        return node
+
+
+def add_function_mapping(python_name, cpp_name, include_files, return_type):
     '''Add a re-mapping from a python function to an actual function.
 
     python_name: fully qualified name of the python function
@@ -54,13 +57,16 @@ def add_function_mapping (python_name, cpp_name, include_files, return_type):
     return_type: C++ return type
     '''
     global functions_to_replace
-    functions_to_replace[python_name] = cpp_function(cpp_name, include_files if type(include_files) is list else [include_files,], return_type)
+    functions_to_replace[python_name] = cpp_function(cpp_name, include_files if type(include_files) is list else [include_files, ], return_type)
+
 
 # The list of functions to do the replacement
 functions_to_replace = {}
 
+
 # The named tuple that stores the replacement info.
 cpp_function = namedtuple('cpp_function', ['cpp_name', 'include_files', 'cpp_return_type'])
+
 
 # A few simple functions:
 add_function_mapping('builtins.abs', 'std::abs', 'cmath', 'double')

@@ -2,13 +2,14 @@
 # see https://stackoverflow.com/questions/33533148/how-do-i-specify-that-the-return-type-of-a-method-is-the-same-as-the-class-itsel
 # for info on this next line. Already looking forward to python 4...
 import copy
-from typing import Union
+
 
 def top_level_scope():
     '''
     Returns a top level scope. Basically, the class level.
     '''
     return gc_scope_top_level()
+
 
 class gc_scope:
     'Internal class to track the scope of a statement.'
@@ -47,24 +48,27 @@ class gc_scope:
             return True
         if self.is_top_level():
             return False
-            
+
         if len(c._scope_stack) > len(self._scope_stack):
             return False
-        
-        return all([a is b for a,b in zip(self._scope_stack, c._scope_stack[:len(self._scope_stack)])])
+
+        return all([a is b for a, b in zip(self._scope_stack, c._scope_stack[:len(self._scope_stack)])])
 
     def is_top_level(self):
         return False
 
+
 class gc_scope_top_level:
     def is_top_level(self):
         return True
+
     def __getitem__(self, key: int) -> gc_scope:
         raise BaseException("This should never be called. Internal error")
-    
+
     def starts_with(self, c):
         'Starts with can only be true for top level if the other guy is top level'
         return type(c) is gc_scope_top_level
+
 
 def deepest_scope(v1, v2):
     '''

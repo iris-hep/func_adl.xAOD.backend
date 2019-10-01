@@ -2,24 +2,28 @@
 import ast
 from func_adl.xAOD.backend.ast import ast_hash
 from func_adl import EventDataset
+from asyncio import create_task
+
+async def do_call (a):
+    return a
 
 def build_ast(ds_name:str) -> ast.AST:
     return EventDataset(ds_name) \
         .Select('lambda e: e.Jets("jets").SelectMany(lambda j: e.Tracks("InnerTracks")).First()') \
         .AsROOTTTree('dude.root', 'analysis', 'JetPt') \
-        .value(executor=lambda a: a)
+        .value(executor=do_call)
 
 def build_ast_array_1(ds_name:str) -> ast.AST:
     return EventDataset(ds_name) \
         .Select('lambda e: e.Jets("jets").SelectMany(lambda j: e.Tracks("InnerTracks")).First()') \
         .AsROOTTTree('dude.root', 'analysis', ['JetPt']) \
-        .value(executor=lambda a: a)
+        .value(executor=do_call)
 
 def build_ast_array_2(ds_name:str) -> ast.AST:
     return EventDataset(ds_name) \
         .Select('lambda e: e.Jets("jets").SelectMany(lambda j: e.Tracks("InnerTracks")).First()') \
         .AsROOTTTree('dude.root', 'analysis', ['JetPt', 'JetEta']) \
-        .value(executor=lambda a: a)
+        .value(executor=do_call)
 
 def test_ast_hash_works():
     a = build_ast("file://root.root")

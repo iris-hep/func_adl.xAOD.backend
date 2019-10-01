@@ -4,7 +4,8 @@
 
 unique_var_index = 0
 
-def unique_name(name, is_class_var = False):
+
+def unique_name(name, is_class_var=False):
     r'''Will return a new C++ legal variable name that has been made unique with an index.
 
     name - Base name of the variable. For example, if it is "dude", then "dude7" might be the result.

@@ -1,6 +1,7 @@
 # Simplify tuple access.
 import ast
 
+
 class remove_tuple_subscripts(ast.NodeTransformer):
     r'''
     Turns (e1, e2, e3)[0] into just e1.
@@ -21,7 +22,7 @@ class remove_tuple_subscripts(ast.NodeTransformer):
 
             if index >= len(subscript.value.elts):
                 raise BaseException("Attempt to index tuple out of bounds")
-            
+
             return self.visit(subscript.value.elts[index])
 
         return self.generic_visit(subscript)
