@@ -16,7 +16,7 @@ setup(name="func_adl.xAOD.backend",
       download_url="http://iris-hep.org",
       license="TBD",
       test_suite="tests",
-      install_requires=["requests>=2.0.0", "pandas>=0.24.0", "uproot>=3.7.0", "retry>=0.9.2"],
+      install_requires=["requests>=2.0.0", "pandas>=0.24.0", "uproot>=3.7.0", "retry>=0.9.2", "Jinja2>=2.10"],
       setup_requires=["pytest-runner"],
       tests_require=["pytest>=3.9"],
       classifiers=[
