@@ -1,5 +1,6 @@
 # Implement a call stack which can be used in all our ast parsers
 
+
 class argument_stack:
     '''
     Simple stack class to hold name definitions. Each level
@@ -7,7 +8,7 @@ class argument_stack:
     Otherwise it is possible to see them. When you pop a frame off,
     then all defined variables go away.
     '''
-    def __init__ (self):
+    def __init__(self):
         self._arg_transformer = [{}]
 
     def push_stack_frame(self):
@@ -34,7 +35,8 @@ class argument_stack:
 
     def define_name(self, name, val):
         'Add a definition to the current deepest stack frame'
-        self._arg_transformer[-1][name]=val
+        self._arg_transformer[-1][name] = val
+
 
 class stack_frame:
     '''
@@ -44,11 +46,10 @@ class stack_frame:
     def __init__(self, arg_stack):
         self._arg_stack = arg_stack
 
-    def __enter__ (self):
+    def __enter__(self):
         self._arg_stack.push_stack_frame()
         return None
 
-    def __exit__ (self, type, value, traceback):
+    def __exit__(self, type, value, traceback):
         self._arg_stack.pop_stack_frame()
         return None
-    
