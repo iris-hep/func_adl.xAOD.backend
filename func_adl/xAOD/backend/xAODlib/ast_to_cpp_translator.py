@@ -34,6 +34,12 @@ compare_operations = {
 }
 
 
+class xAODTranslationError(BaseException):
+    'Thrown when a translation error happens of one sort or another.'
+    def __init__(self, msg):
+        BaseException.__init__(self, msg)
+
+
 def check_accumulator_type(t: ctyp.terminal):
     'We can only deal with certain types for doing an accumulation. Make sure this is one.'
     t_str = str(t)
@@ -84,10 +90,10 @@ def determine_type_mf(parent_type, function_name):
     base_types = ['double', 'float', 'int']
     s_parent_type = str(parent_type)
     if s_parent_type in base_types:
-        raise BaseException("Unable to call method '{0}' on type '{1}'.".format(function_name, str(parent_type)))
+        raise xAODTranslationError(f'Unable to call method {function_name} on type {str(parent_type)}.')
 
     # Ok - we give up. Return a double.
-    print("Warning: assumping that the method '{0}.{1}(...)' has return type 'double'. Use cpp_types.add_method_type_info to suppress (or correct) this warning.".format(str(s_parent_type), function_name))
+    print(f"Warning: assumping that the method '{str(s_parent_type)}.{function_name}(...)' has return type 'double'. Use cpp_types.add_method_type_info to suppress (or correct) this warning.")
     return ctyp.terminal('double')
 
 

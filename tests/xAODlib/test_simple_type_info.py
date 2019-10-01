@@ -7,20 +7,19 @@ import sys
 from tests.xAODlib.utils_for_testing import exe_for_test
 from func_adl import EventDataset
 import func_adl.xAOD.backend.cpplib.cpp_types as ctyp
+from func_adl.xAOD.backend.xAODlib.ast_to_cpp_translator import xAODTranslationError
 
 def test_cant_call_double():
+    msg = ""
     try: 
         EventDataset("file://root.root") \
             .Select("lambda e: e.Jets('AntiKt4EMTopoJets').Select(lambda j: j.pt().eta()).Sum()") \
-            .AsROOTTTree('root.root', 'dude', "n_jets") \
+            .AsROOTTTree('root.root', "dude", "n_jets") \
             .value(executor=exe_for_test)
-    except BaseException as e:
-        if "Unable to call method 'eta' on type 'double'" not in str(e):
-            raise e from None
-        assert "Unable to call method 'eta' on type 'double'" in str(e)
-        return
-    # Should never get here!
-    assert False
+    except xAODTranslationError as e:
+        msg = str(e)
+
+    assert 'Unable to call method eta on type double' in msg
 
 def test_can_call_prodVtx():
     ctyp.add_method_type_info("xAOD::TruthParticle", "prodVtx", ctyp.terminal('xAODTruth::TruthVertex', is_pointer=True))
