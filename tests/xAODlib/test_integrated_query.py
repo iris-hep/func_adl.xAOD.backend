@@ -2,7 +2,7 @@
 
 # These are very long running do not run them normally!!
 import pytest
-pytestmark = pytest.mark.skipif(True, reason='Long running tests, skipped except when run by hand')
+#pytestmark = pytest.mark.skipif(True, reason='Long running tests, skipped except when run by hand')
 
 # These are *long* tests and so should not normally be run. Each test can take of order 30 seconds or so!!
 from func_adl import EventDataset
@@ -76,6 +76,7 @@ def test_flatten_array():
     assert int(training_df.iloc[0]['JetPt']) == 257
     assert int(training_df.iloc[0]['JetPt']) != int(training_df.iloc[1]['JetPt'])
 
+@pytest.mark.skip()
 def test_flatten_array_remote():
     # A very simple flattening of arrays
     training_df = f_root_remote \

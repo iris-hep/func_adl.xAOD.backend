@@ -74,10 +74,10 @@ async def use_executor_xaod_docker(a: ast.AST):
             print(f"Result of run: {proc.returncode}")
             print(f'Output:\n{p_stdout}')
             print(f'Error:\n{p_stderr}')
-        if proc.returncode != 0:
-            raise BaseException("Docker command failed with error {0}".format(proc.returncode))
-        if dump_cpp:
+        if dump_cpp or proc.returncode != 0:
             os.system("type " + os.path.join(str(local_run_dir), "query.cxx"))
+        if proc.returncode != 0:
+            raise BaseException(f"Docker command failed with error {proc.returncode} ({docker_cmd})")
 
         # Now that we have run, we can pluck out the result.
         if type(f_spec.result_rep) not in result_handlers:
