@@ -12,14 +12,10 @@ import asyncio
 import os
 
 # The file we are going to go after:
-f_location = 'file://G:/mc16_13TeV/AOD.16300985._000011.pool.root.1'
-f_location = 'file://C:/Users/gordo/Documents/Code/IRIS-HEP/AOD.16300985._000011.pool.root.1'
-f_root_remote = EventDataset('root://194.12.190.44:2300//DAOD_EXOT15.17545510._000001.pool.root.1')
+local_path = 'tests/xAODlib/jets_10_events.root'
+f_location = f'file:///{os.path.abspath(local_path)}'
 f = EventDataset(f_location)
 f_multiple = EventDataset([f_location, f_location])
-f_ds = EventDataset(r'localds://mc16_13TeV.311309.MadGraphPythia8EvtGen_A14NNPDF31LO_HSS_LLP_mH125_mS5_ltlow.deriv.DAOD_EXOT15.e7270_e5984_s3234_r9364_r9315_p3795')
-
-#f = EventDataset(r"file://C:/Users/gordo/Documents/mc16_13TeV/AOD.16300985._000011.pool.root.1")
 
 def test_select_first_of_array():
     # The hard part is that First() here does not return a single item, but, rather, an array that
@@ -30,7 +26,7 @@ def test_select_first_of_array():
             .value(executor=use_executor_dataset_resolver)
     assert training_df.iloc[0]['dude'] == 1897
     assert training_df.iloc[1]['dude'] == 605
-    assert training_df.iloc[1999]['dude'] == 231
+    assert training_df.iloc[-1]['dude'] == 336
 
 @pytest.yield_fixture()
 def event_loop():
@@ -57,15 +53,6 @@ async def test_two_simultaneous_runs():
     assert r1.iloc[0]['dude'] == 1897
     assert r2.iloc[0]['dude'] == 1897
 
-# def test_select_first_of_array_ds():
-#     # The hard part is that First() here does not return a single item, but, rather, an array that
-#     # has to be aggregated over.
-#     training_df = f_ds \
-#             .Select('lambda e: e.Jets("AntiKt4EMTopoJets").Select(lambda j: e.Tracks("InDetTrackParticles")).First().Count()') \
-#             .AsPandasDF('dude') \
-#             .value(executor=use_executor_dataset_resolver)
-#     assert training_df.iloc[0]['dude'] == 190
-
 def test_flatten_array():
     # A very simple flattening of arrays
     training_df = f \
@@ -74,17 +61,6 @@ def test_flatten_array():
         .AsPandasDF('JetPt') \
         .value(executor=use_executor_dataset_resolver)
     assert int(training_df.iloc[0]['JetPt']) == 257
-    assert int(training_df.iloc[0]['JetPt']) != int(training_df.iloc[1]['JetPt'])
-
-@pytest.mark.skip()
-def test_flatten_array_remote():
-    # A very simple flattening of arrays
-    training_df = f_root_remote \
-        .SelectMany('lambda e: e.Jets("AntiKt4EMTopoJets")') \
-        .Select('lambda j: j.pt()/1000.0') \
-        .AsPandasDF('JetPt') \
-        .value(executor=use_executor_dataset_resolver)
-    assert int(training_df.iloc[0]['JetPt']) == 64
     assert int(training_df.iloc[0]['JetPt']) != int(training_df.iloc[1]['JetPt'])
 
 def test_First_two_outer_loops():
@@ -112,7 +88,7 @@ def test_first_object_in_event_with_where():
         .AsPandasDF('FirstJetPt') \
         .value(executor=use_executor_dataset_resolver)
     assert int(training_df.iloc[0]['FirstJetPt']) == 257
-    assert len(training_df) == 2000
+    assert len(training_df) == 10
 
 def test_truth_particles():
     training_df = f \
@@ -127,4 +103,4 @@ def test_truth_particles_awk():
         .AsAwkwardArray('NTruthParticles') \
         .value(executor=use_executor_dataset_resolver)
     print (training_df)
-    assert len(training_df[b'NTruthParticles']) == 2000
+    assert len(training_df[b'NTruthParticles']) == 10
