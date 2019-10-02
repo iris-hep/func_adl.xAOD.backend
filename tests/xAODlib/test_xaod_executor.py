@@ -141,13 +141,15 @@ def test_Select_Multiple_arrays_2_step():
 
 def test_Select_of_2D_array_fails():
     # The following statement should be a straight sequence, not an array.
+    msg = ""
     try:
         EventDataset("file://root.root") \
             .Select('lambda e: e.Jets("AntiKt4EMTopoJets").Select(lambda j: (j.pt()/1000.0, j.eta()))') \
             .AsPandasDF(['JetInfo']) \
             .value(executor=exe_for_test)
     except BaseException as e:
-        assert "Nested data structures" in str(e)
+        msg = str(e)
+    assert "Nested data structures" in msg
 
 def test_SelectMany_of_tuple_is_not_array():
     # The following statement should be a straight sequence, not an array.
