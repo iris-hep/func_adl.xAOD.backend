@@ -8,8 +8,8 @@ with open("README.md", "r") as fh:
 
 xaod_template_files = listdir('func_adl/xAOD/backend/R21Code')
 setup(name="func_adl.xAOD.backend",
-      version='1.0.0-alpha.3',
-      packages=find_namespace_packages(exclude=['tests']),
+      version='1.0.0-alpha.5',
+      packages=['func_adl.xAOD.backend'] + [f'func_adl.xAOD.backend.{f}' for f in ['ast', 'cpplib', 'dataset_resolvers', 'xAODlib']],
       scripts=[],
       description="Functional Analysis Description Language for xAOD backends",
       long_description=long_description,
