@@ -1,4 +1,3 @@
-from setuptools import find_namespace_packages
 from distutils.core import setup
 from os import listdir
 
