@@ -71,5 +71,8 @@
     ],
     "python.linting.pylintEnabled": false,
     "python.testing.pytestEnabled": true,
-    "python.testing.autoTestDiscoverOnSaveEnabled": false
+    "python.testing.autoTestDiscoverOnSaveEnabled": false,
+    "python.pythonPath": "I:\\Anaconda3\\envs\\func-adl.xAOD.backend-dev\\python.exe",
+    "python.analysis.openFilesOnly": false,
+    "pyright.openFilesOnly": false
 }
