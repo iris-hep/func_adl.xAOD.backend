@@ -5,7 +5,7 @@ channels:
 
 dependencies:
   - flake8
-  - python>=3.7.0
+  - python==3.7.4
   - pip
   - pytest
   - pytest-asyncio
