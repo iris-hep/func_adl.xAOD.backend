@@ -1,6 +1,5 @@
 # Tests that make sure the xaod executor is working correctly
 from func_adl import EventDataset
-from func_adl.util_ast_LINQ import ReplaceLINQOperators
 from func_adl.xAOD.backend.xAODlib.atlas_xaod_executor import atlas_xaod_executor
 from func_adl.xAOD.backend.util_LINQ import find_dataset
 from func_adl.xAOD.backend.xAODlib.util_scope import top_level_scope

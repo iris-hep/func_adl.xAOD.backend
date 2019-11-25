@@ -12,7 +12,8 @@ def generate_count_call(seq):
         returns:
         agg_ast - An ast call to the Aggregate call.
     '''
-    agg_lambda = ast.parse("lambda acc,v: acc + 1").body[0].value
+    agg_lambda_body = ast.parse("lambda acc,v: acc + 1").body[0]
+    agg_lambda = agg_lambda_body.value
     agg_start = ast.Num(0)
 
     new_call = ast.Call(func=ast.Attribute(attr="Aggregate", value=seq), args=[agg_start, agg_lambda])

@@ -1,6 +1,6 @@
 # A few tests on the LINQ ast funcitonality
-from func_adl import EventDataset
 from func_adl.xAOD.backend.util_LINQ import find_dataset
+from func_adl import EventDataset
 import ast
 
 async def do_exe(a):

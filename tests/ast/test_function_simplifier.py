@@ -1,6 +1,5 @@
 import sys
 sys.path.append(".")
-from func_adl.util_ast_LINQ import ReplaceLINQOperators
 from func_adl.xAOD.backend.ast.function_simplifier import simplify_chained_calls
 from tests.util_debug_ast import normalize_ast
 import ast

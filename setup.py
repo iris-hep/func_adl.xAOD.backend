@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 xaod_template_files = listdir('func_adl/xAOD/backend/R21Code')
 setup(name="func_adl.xAOD.backend",
-      version='1.0.0-alpha.5',
+      version='1.0.0-alpha.6',
       packages=['func_adl.xAOD.backend'] + [f'func_adl.xAOD.backend.{f}' for f in ['ast', 'cpplib', 'dataset_resolvers', 'xAODlib']],
       scripts=[],
       description="Functional Analysis Description Language for xAOD backends",
@@ -20,7 +20,7 @@ setup(name="func_adl.xAOD.backend",
       url="https://github.com/iris-hep/func_adl.xAOD.backend",
       license="TBD",
       test_suite="tests",
-      install_requires=["requests>=2.0.0", "pandas>=0.24.0", "uproot>=3.7.0", "retry>=0.9.2", "Jinja2>=2.10", "func_adl.xAOD==1.0.0a4"],
+      install_requires=["requests>=2.0.0", "pandas>=0.24.0", "uproot>=3.7.0", "retry>=0.9.2", "Jinja2>=2.10", "func_adl.xAOD==1.0.0a6"],
       setup_requires=["pytest-runner"],
       tests_require=["pytest>=3.9"],
       classifiers=[

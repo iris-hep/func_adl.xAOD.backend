@@ -1,5 +1,4 @@
 # Various node visitors to clean up nested function calls of various types.
-from func_adl import Select, Where, SelectMany, First
 from func_adl.util_ast import lambda_body, lambda_body_replace, lambda_unwrap, lambda_call, lambda_build, lambda_is_identity, lambda_test, lambda_is_true
 from func_adl.xAOD.backend.ast.call_stack import argument_stack, stack_frame
 import copy

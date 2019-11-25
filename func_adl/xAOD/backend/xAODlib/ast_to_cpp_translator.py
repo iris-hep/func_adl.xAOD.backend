@@ -12,7 +12,6 @@ import func_adl.xAOD.backend.cpplib.cpp_types as ctyp
 import func_adl.xAOD.backend.xAODlib.result_handlers as rh
 from func_adl.xAOD.backend.ast.call_stack import argument_stack, stack_frame
 from func_adl.xAOD.backend.cpplib.cpp_functions import FunctionAST
-from func_adl import ResultTTree, ResultPandasDF, ResultAwkwardArray
 
 # Bring in all the machinery to process xAOD files. This adds
 # extra stuff to the processing engine to special case things.
@@ -650,109 +649,109 @@ class query_ast_visitor(ast.NodeVisitor):
         node.rep = crep.cpp_value('"{0}"'.format(node.s), self._gc.current_scope(), ctyp.terminal("string"))
         self._result = node.rep
 
-    def visit_ResultTTree(self, node: ResultTTree):
-        '''This AST means we are taking an iterable and converting it to a ROOT file.
-        '''
-        # Get the representations for each variable. We expect some sort of structure
-        # for the variables - or perhaps a single variable.
-        self.generic_visit(node)
-        v_rep_not_norm = self.as_sequence(node.source)
+    # def visit_ResultTTree(self, node: ResultTTree):
+    #     '''This AST means we are taking an iterable and converting it to a ROOT file.
+    #     '''
+    #     # Get the representations for each variable. We expect some sort of structure
+    #     # for the variables - or perhaps a single variable.
+    #     self.generic_visit(node)
+    #     v_rep_not_norm = self.as_sequence(node.source)
 
-        # What we have is a sequence of the data values we want to fill. The iterator at play
-        # here is the scope we want to use to run our Fill() calls to the TTree.
-        scope_fill = v_rep_not_norm.iterator_value().scope()
+    #     # What we have is a sequence of the data values we want to fill. The iterator at play
+    #     # here is the scope we want to use to run our Fill() calls to the TTree.
+    #     scope_fill = v_rep_not_norm.iterator_value().scope()
 
-        # Clean the data up so it is uniform and the next bit can proceed smoothly.
-        # If we don't have a tuple of data to log, turn it into a tuple.
-        seq_values = v_rep_not_norm.sequence_value()
-        if not isinstance(seq_values, crep.cpp_tuple):
-            seq_values = crep.cpp_tuple((v_rep_not_norm.sequence_value(),), scope_fill)
+    #     # Clean the data up so it is uniform and the next bit can proceed smoothly.
+    #     # If we don't have a tuple of data to log, turn it into a tuple.
+    #     seq_values = v_rep_not_norm.sequence_value()
+    #     if not isinstance(seq_values, crep.cpp_tuple):
+    #         seq_values = crep.cpp_tuple((v_rep_not_norm.sequence_value(),), scope_fill)
 
-        # Make sure the number of items is the same as the number of columns specified.
-        if len(seq_values.values()) != len(node.column_names):
-            raise BaseException("Number of columns ({0}) is not the same as labels ({1}) in TTree creation".format(len(seq_values.values()), len(node.column_names)))
+    #     # Make sure the number of items is the same as the number of columns specified.
+    #     if len(seq_values.values()) != len(node.column_names):
+    #         raise BaseException("Number of columns ({0}) is not the same as labels ({1}) in TTree creation".format(len(seq_values.values()), len(node.column_names)))
 
-        # Next, look at each on in turn to decide if it is a vector or a simple variable.
-        # Create a variable that we will fill for each one.
-        var_names = [(name, crep.cpp_variable(unique_name(name, is_class_var=True), self._gc.current_scope(), cpp_type=get_ttree_type(rep)))
-                     for name, rep in zip(node.column_names, seq_values.values())]
+    #     # Next, look at each on in turn to decide if it is a vector or a simple variable.
+    #     # Create a variable that we will fill for each one.
+    #     var_names = [(name, crep.cpp_variable(unique_name(name, is_class_var=True), self._gc.current_scope(), cpp_type=get_ttree_type(rep)))
+    #                  for name, rep in zip(node.column_names, seq_values.values())]
 
-        # For each incoming variable, we need to declare something we are going to write.
-        for cv in var_names:
-            self._gc.declare_class_variable(cv[1])
+    #     # For each incoming variable, we need to declare something we are going to write.
+    #     for cv in var_names:
+    #         self._gc.declare_class_variable(cv[1])
 
-        # Next, emit the booking code
-        tree_name = unique_name(node.tree_name)
-        self._gc.add_book_statement(statement.book_ttree(tree_name, var_names))
+    #     # Next, emit the booking code
+    #     tree_name = unique_name(node.tree_name)
+    #     self._gc.add_book_statement(statement.book_ttree(tree_name, var_names))
 
-        # Note that the output file and tree are what we are going to return.
-        # The output filename is fixed - the hose code in AnalysisBase has that hard coded.
-        # To allow it to be different we have to modify that template too, and pass the
-        # information there. If more than one tree is written, the current code would
-        # lead to a bug.
-        node.rep = rh.cpp_ttree_rep("ANALYSIS.root", tree_name, self._gc.current_scope())
+    #     # Note that the output file and tree are what we are going to return.
+    #     # The output filename is fixed - the hose code in AnalysisBase has that hard coded.
+    #     # To allow it to be different we have to modify that template too, and pass the
+    #     # information there. If more than one tree is written, the current code would
+    #     # lead to a bug.
+    #     node.rep = rh.cpp_ttree_rep("ANALYSIS.root", tree_name, self._gc.current_scope())
 
-        # For each varable we need to save, cache it or push it back, depending.
-        # Make sure that it happens at the proper scope, where what we are after is defined!
-        s_orig = self._gc.current_scope()
-        for e_rep, e_name in zip(seq_values.values(), var_names):
-            # Set the scope. Normally we want to do it where the variable was calculated
-            # (think of cases when you have to calculate something with a `push_back`),
-            # but if the variable was already calculated, we want to make sure we are at least
-            # in the same scope as the tree fill.
-            e_rep_scope = e_rep.scope() if not isinstance(e_rep, crep.cpp_sequence) else e_rep.sequence_value().scope()
-            if e_rep_scope.starts_with(scope_fill):
-                self._gc.set_scope(e_rep_scope)
-            else:
-                self._gc.set_scope(scope_fill)
+    #     # For each varable we need to save, cache it or push it back, depending.
+    #     # Make sure that it happens at the proper scope, where what we are after is defined!
+    #     s_orig = self._gc.current_scope()
+    #     for e_rep, e_name in zip(seq_values.values(), var_names):
+    #         # Set the scope. Normally we want to do it where the variable was calculated
+    #         # (think of cases when you have to calculate something with a `push_back`),
+    #         # but if the variable was already calculated, we want to make sure we are at least
+    #         # in the same scope as the tree fill.
+    #         e_rep_scope = e_rep.scope() if not isinstance(e_rep, crep.cpp_sequence) else e_rep.sequence_value().scope()
+    #         if e_rep_scope.starts_with(scope_fill):
+    #             self._gc.set_scope(e_rep_scope)
+    #         else:
+    #             self._gc.set_scope(scope_fill)
 
-            # If the variable is something we are iterating over, then fill it, otherwise,
-            # just set it.
-            if rep_is_collection(e_rep):
-                self._gc.add_statement(statement.push_back(e_name[1], e_rep.sequence_value()))
-            else:
-                self._gc.add_statement(statement.set_var(e_name[1], e_rep))
-                cs = self._gc.current_scope()
-                if cs.starts_with(scope_fill):
-                    scope_fill = cs
+    #         # If the variable is something we are iterating over, then fill it, otherwise,
+    #         # just set it.
+    #         if rep_is_collection(e_rep):
+    #             self._gc.add_statement(statement.push_back(e_name[1], e_rep.sequence_value()))
+    #         else:
+    #             self._gc.add_statement(statement.set_var(e_name[1], e_rep))
+    #             cs = self._gc.current_scope()
+    #             if cs.starts_with(scope_fill):
+    #                 scope_fill = cs
 
-        # The fill statement. This should happen at the scope where the tuple was defined.
-        # The scope where this should be done is a bit tricky (note the update above):
-        # - If a sequence, you want it where the sequence iterator is defined - or outside that scope
-        # - If a value, you want it at the level where the value is set.
-        self._gc.set_scope(scope_fill)
-        self._gc.add_statement(statement.ttree_fill(tree_name))
-        for e in zip(seq_values.values(), var_names):
-            if rep_is_collection(e[0]):
-                self._gc.add_statement(statement.container_clear(e[1][1]))
+    #     # The fill statement. This should happen at the scope where the tuple was defined.
+    #     # The scope where this should be done is a bit tricky (note the update above):
+    #     # - If a sequence, you want it where the sequence iterator is defined - or outside that scope
+    #     # - If a value, you want it at the level where the value is set.
+    #     self._gc.set_scope(scope_fill)
+    #     self._gc.add_statement(statement.ttree_fill(tree_name))
+    #     for e in zip(seq_values.values(), var_names):
+    #         if rep_is_collection(e[0]):
+    #             self._gc.add_statement(statement.container_clear(e[1][1]))
 
-        # And we are a terminal, so pop off the block.
-        self._gc.set_scope(s_orig)
-        self._gc.pop_scope()
+    #     # And we are a terminal, so pop off the block.
+    #     self._gc.set_scope(s_orig)
+    #     self._gc.pop_scope()
 
-    def visit_ResultAwkwardArray(self, node: ResultAwkwardArray):
-        '''
-        The result of this guy is an awkward array. We generate a token here, and invoke the resultTTree in order to get the
-        actual ROOT file written. Later on, when dealing with the result stuff, we extract it into an awkward array.
-        '''
-        ttree = ResultTTree(node.source, node.column_names, 'pandatree', 'output.root')
-        r = self.get_rep(ttree)
-        if not isinstance(r, rh.cpp_ttree_rep):
-            raise BaseException("Can't deal with different return type from tree!")
-        node.rep = rh.cpp_awkward_rep(r.filename, r.treename, self._gc.current_scope())
-        self._result = node.rep
+    # def visit_ResultAwkwardArray(self, node: ResultAwkwardArray):
+    #     '''
+    #     The result of this guy is an awkward array. We generate a token here, and invoke the resultTTree in order to get the
+    #     actual ROOT file written. Later on, when dealing with the result stuff, we extract it into an awkward array.
+    #     '''
+    #     ttree = ResultTTree(node.source, node.column_names, 'pandatree', 'output.root')
+    #     r = self.get_rep(ttree)
+    #     if not isinstance(r, rh.cpp_ttree_rep):
+    #         raise BaseException("Can't deal with different return type from tree!")
+    #     node.rep = rh.cpp_awkward_rep(r.filename, r.treename, self._gc.current_scope())
+    #     self._result = node.rep
 
-    def visit_ResultPandasDF(self, node: ResultPandasDF):
-        '''
-        The result of this guy is an pandas dataframe. We generate a token here, and invoke the resultTTree in order to get the
-        actual ROOT file written. Later on, when dealing with the result stuff, we extract it into an awkward array.
-        '''
-        ttree = ResultTTree(node.source, node.column_names, 'pandatree', 'output.root')
-        r = self.get_rep(ttree)
-        if not isinstance(r, rh.cpp_ttree_rep):
-            raise BaseException("Can't deal with different return type from tree!")
-        node.rep = rh.cpp_pandas_rep(r.filename, r.treename, self._gc.current_scope())
-        self._result = node.rep
+    # def visit_ResultPandasDF(self, node: ResultPandasDF):
+    #     '''
+    #     The result of this guy is an pandas dataframe. We generate a token here, and invoke the resultTTree in order to get the
+    #     actual ROOT file written. Later on, when dealing with the result stuff, we extract it into an awkward array.
+    #     '''
+    #     ttree = ResultTTree(node.source, node.column_names, 'pandatree', 'output.root')
+    #     r = self.get_rep(ttree)
+    #     if not isinstance(r, rh.cpp_ttree_rep):
+    #         raise BaseException("Can't deal with different return type from tree!")
+    #     node.rep = rh.cpp_pandas_rep(r.filename, r.treename, self._gc.current_scope())
+    #     self._result = node.rep
 
     def visit_Select(self, select_ast):
         'Transform the iterable from one form to another'

@@ -7,7 +7,6 @@ from typing import Iterable
 from func_adl.xAOD.backend.ast import ast_hash
 from func_adl.xAOD.backend.xAODlib.atlas_xaod_executor import atlas_xaod_executor
 from func_adl.xAOD.backend.util_LINQ import find_dataset
-from func_adl import ResultTTree
 
 
 class CacheExeException(BaseException):

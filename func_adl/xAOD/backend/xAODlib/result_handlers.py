@@ -4,7 +4,6 @@
 from func_adl.xAOD.backend.cpplib.cpp_representation import cpp_value
 import func_adl.xAOD.backend.cpplib.cpp_types as ctyp
 from func_adl.xAOD.backend.cpplib.cpp_vars import unique_name
-from func_adl import ROOTTreeFileInfo, ROOTTreeResult
 import uproot
 import os
 import shutil

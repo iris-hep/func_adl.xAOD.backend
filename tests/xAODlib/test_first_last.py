@@ -1,7 +1,6 @@
 # Code to do the testing starts here.
 from math import sin
 from tests.xAODlib.utils_for_testing import exe_for_test, get_lines_of_code, print_lines, find_line_with, find_open_blocks
-from func_adl import EventDataset
 
 def test_first_jet_in_event():
     EventDataset("file://root.root") \

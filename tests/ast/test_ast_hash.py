@@ -1,8 +1,8 @@
 # Test various things about the hash functions we use for ast's.
 import ast
 from func_adl.xAOD.backend.ast import ast_hash
-from func_adl import EventDataset
 from asyncio import create_task
+from func_adl import EventDataset
 
 async def do_call (a):
     return a

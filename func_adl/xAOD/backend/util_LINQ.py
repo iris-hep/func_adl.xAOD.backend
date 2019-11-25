@@ -1,8 +1,8 @@
 # Helpers for LINQ operators and LINQ expressions in AST form.
 # Utility routines to manipulate LINQ expressions.
-from func_adl import EventDataset
 import ast
 from typing import Optional
+from func_adl import EventDataset
 
 
 def find_dataset(a: ast.AST) -> EventDataset:

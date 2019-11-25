@@ -1,10 +1,10 @@
 # Test out the grid dataset resolver code
 from func_adl.xAOD.backend.dataset_resolvers.gridds import resolve_local_ds_url, GridDsException, dataset_finder
-from func_adl import EventDataset
 from tempfile import NamedTemporaryFile
 import pytest
 from unittest.mock import Mock
 import tempfile
+from func_adl import EventDataset
 
 # Local files
 def test_local_ds_good():
